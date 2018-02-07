@@ -6,16 +6,19 @@ __author__ = 'Aaron Swartz <me@aaronsw.com>'
 __copyright__ = '(C) 2003 Aaron Swartz. GNU GPL 2 or 3.'
 __version__ = '0.22'
 
-import difflib, string
+import difflib
+import string
 
-def isTag(x): return x[0] == "<" and x[-1] == ">"
 
-def textDiff(a, b):
+def is_tag(x): return x[0] == "<" and x[-1] == ">"
+
+
+def text_diff(a, b):
     """Takes in strings a and b and returns a human-readable HTML diff."""
 
     out = []
     a, b = html2list(a), html2list(b)
-    try: # autojunk can cause malformed HTML, but also speeds up processing.
+    try:  # autojunk can cause malformed HTML, but also speeds up processing.
         s = difflib.SequenceMatcher(None, a, b, autojunk=False)
     except TypeError:
         s = difflib.SequenceMatcher(None, a, b)
@@ -24,16 +27,20 @@ def textDiff(a, b):
             # @@ need to do something more complicated here
             # call textDiff but not for html, but for some html... ugh
             # gonna cop-out for now
-            out.append('<del class="diff modified">'+''.join(a[e[1]:e[2]]) + '</del><ins class="diff modified">'+''.join(b[e[3]:e[4]])+"</ins>")
+            out.append('<del class="diff modified">' + ''.join(
+                a[e[1]:e[2]]) + '</del><ins class="diff modified">' + ''.join(
+                b[e[3]:e[4]]) + "</ins>")
         elif e[0] == "delete":
-            out.append('<del class="diff">'+ ''.join(a[e[1]:e[2]]) + "</del>")
+            out.append('<del class="diff">' + ''.join(a[e[1]:e[2]]) + "</del>")
         elif e[0] == "insert":
-            out.append('<ins class="diff">'+''.join(b[e[3]:e[4]]) + "</ins>")
+            out.append('<ins class="diff">' + ''.join(b[e[3]:e[4]]) + "</ins>")
         elif e[0] == "equal":
             out.append(''.join(b[e[3]:e[4]]))
-        else: 
-            raise "Um, something's broken. I didn't expect a '" + `e[0]` + "'."
+        else:
+            raise "Um, something's broken. I didn't expect a '" + str(
+                e[0]) + "'."
     return ''.join(out)
+
 
 def html2list(x, b=0):
     mode = 'char'
@@ -41,29 +48,39 @@ def html2list(x, b=0):
     out = []
     for c in x:
         if mode == 'tag':
-            if c == '>': 
-                if b: cur += ']'
-                else: cur += c
-                out.append(cur); cur = ''; mode = 'char'
-            else: cur += c
-        elif mode == 'char':
-            if c == '<': 
+            if c == '>':
+                if b:
+                    cur += ']'
+                else:
+                    cur += c
                 out.append(cur)
-                if b: cur = '['
-                else: cur = c
+                cur = ''
+                mode = 'char'
+            else:
+                cur += c
+        elif mode == 'char':
+            if c == '<':
+                out.append(cur)
+                if b:
+                    cur = '['
+                else:
+                    cur = c
                 mode = 'tag'
-            elif c in string.whitespace: out.append(cur+c); cur = ''
-            else: cur += c
+            elif c in string.whitespace:
+                out.append(cur + c); cur = ''
+            else:
+                cur += c
     out.append(cur)
-    return filter(lambda x: x is not '', out)
+    return list(filter(lambda x: x is not '', out))
+
 
 if __name__ == '__main__':
     import sys
+
     try:
         a, b = sys.argv[1:3]
     except ValueError:
-        print "htmldiff: highlight the differences between two html files"
-        print "usage: " + sys.argv[0] + " a b"
+        print("htmldiff: highlight the differences between two html files")
+        print("usage: " + sys.argv[0] + " a b")
         sys.exit(1)
-    print textDiff(open(a).read(), open(b).read())
-    
+    print(text_diff(open(a, encoding='utf-8').read(), open(b, encoding='utf-8').read()))
