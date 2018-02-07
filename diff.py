@@ -1,86 +1,155 @@
 #!/usr/bin/python
 """HTML Diff: http://www.aaronsw.com/2002/diff
 Rough code, badly documented. Send me comments and patches."""
-
-__author__ = 'Aaron Swartz <me@aaronsw.com>'
-__copyright__ = '(C) 2003 Aaron Swartz. GNU GPL 2 or 3.'
-__version__ = '0.22'
+from operator import itemgetter
 
 import difflib
 import string
 
 
-def is_tag(x): return x[0] == "<" and x[-1] == ">"
+def get_equality(str1: str, str2: str)->float:
+
+    if len(str1) != len(str2):
+        small_str = min(str1, str2)
+        big_str = max(str1, str2)
+    else:
+        small_str = str1
+        big_str = str2
+
+    equal_letters_count = 0
+    for number, letter in enumerate(small_str):
+        try:
+            if letter == big_str[number]:
+                equal_letters_count += 1
+        except IndexError:
+            pass
+
+    letters_count = max(len(str1), len(str2))
+    return equal_letters_count / letters_count
 
 
-def text_diff(a, b):
+def text_diff(text_from, text_to):
     """Takes in strings a and b and returns a human-readable HTML diff."""
 
+    text_to = similize(text_from, text_to)
     out = []
-    a, b = html2list(a), html2list(b)
+    text_from, text_to = html2list(text_from), html2list(text_to)
     try:  # autojunk can cause malformed HTML, but also speeds up processing.
-        s = difflib.SequenceMatcher(None, a, b, autojunk=False)
+        matcher = difflib.SequenceMatcher(
+            None,
+            text_from,
+            text_to,
+            autojunk=False
+        )
     except TypeError:
-        s = difflib.SequenceMatcher(None, a, b)
-    for e in s.get_opcodes():
-        if e[0] == "replace":
+        matcher = difflib.SequenceMatcher(None, text_from, text_to)
+    for action, from_1, to_1, from_2, to_2 in matcher.get_opcodes():
+        if action == "replace":
             # @@ need to do something more complicated here
             # call textDiff but not for html, but for some html... ugh
             # gonna cop-out for now
-            out.append('<del class="diff modified">' + ''.join(
-                a[e[1]:e[2]]) + '</del><ins class="diff modified">' + ''.join(
-                b[e[3]:e[4]]) + "</ins>")
-        elif e[0] == "delete":
-            out.append('<del class="diff">' + ''.join(a[e[1]:e[2]]) + "</del>")
-        elif e[0] == "insert":
-            out.append('<ins class="diff">' + ''.join(b[e[3]:e[4]]) + "</ins>")
-        elif e[0] == "equal":
-            out.append(''.join(b[e[3]:e[4]]))
+            out.append(
+                '<del class="diff modified">{del_}</del>'
+                '<ins class="diff modified">{ins}</ins>'.format(
+                    del_=''.join(text_from[from_1:to_1]),
+                    ins=''.join(text_to[from_2:to_2])
+                )
+            )
+        elif action == "delete":
+            out.append(
+                '<del class="diff">{}</del>'.format(
+                    ''.join(text_from[from_1:to_1])
+                )
+            )
+        elif action == "insert":
+            out.append(
+                '<ins class="diff">{}</ins>'.format(
+                    ''.join(text_to[from_2:to_2])
+                )
+            )
+        elif action == "equal":
+            out.append(
+                ''.join(
+                    text_to[from_2:to_2]
+                )
+            )
         else:
-            raise "Um, something's broken. I didn't expect a '" + str(
-                e[0]) + "'."
+            raise "Um, something's broken. I didn't expect a {}.'".format(
+                action
+            )
     return ''.join(out)
 
 
-def html2list(x, b=0):
+def html2list(text, b=0):
     mode = 'char'
     cur = ''
     out = []
-    for c in x:
+    for char in text:
         if mode == 'tag':
-            if c == '>':
+            if char == '>':
                 if b:
                     cur += ']'
                 else:
-                    cur += c
+                    cur += char
                 out.append(cur)
                 cur = ''
                 mode = 'char'
             else:
-                cur += c
+                cur += char
         elif mode == 'char':
-            if c == '<':
+            if char == '<':
                 out.append(cur)
                 if b:
                     cur = '['
                 else:
-                    cur = c
+                    cur = char
                 mode = 'tag'
-            elif c in string.whitespace:
-                out.append(cur + c); cur = ''
+            elif char in string.whitespace:
+                out.append(cur + char)
+                cur = ''
             else:
-                cur += c
+                cur += char
     out.append(cur)
     return list(filter(lambda x: x is not '', out))
+
+
+def similize(text1, text2):
+    moove_map = []
+    similized_text2 = ''
+    text1_str_list = text1.split('\n')
+    text2_str_list = text2.split('\n')
+    for index1, string1 in enumerate(text1_str_list):
+        equality_map = []
+        for index2, string2 in enumerate(text2_str_list):
+            equality_map.append(
+                (index1, index2, get_equality(string1, string2))
+            )
+        result_string_tuple = max(equality_map, key=itemgetter(2))
+        # print(result_string_tuple)
+        moove_map.append(result_string_tuple)
+    for index_tuple in moove_map:
+        similized_text2 += text2_str_list[index_tuple[1]]
+        if index_tuple[0] + 1 < len(moove_map):
+            similized_text2 += '\n'
+    return similized_text2
 
 
 if __name__ == '__main__':
     import sys
 
+    first_arg, last_arg = 1, 2
     try:
-        a, b = sys.argv[1:3]
+        a, b = sys.argv[first_arg:last_arg + 1]
     except ValueError:
         print("htmldiff: highlight the differences between two html files")
-        print("usage: " + sys.argv[0] + " a b")
+        print("usage: {} a b".format(sys.argv[0]))
         sys.exit(1)
-    print(text_diff(open(a, encoding='utf-8').read(), open(b, encoding='utf-8').read()))
+    text1 = open(a, encoding='utf-8').read()
+    text2 = open(b, encoding='utf-8').read()
+    print(text1, text2, sep='\n')
+    print(
+        text_diff(
+            text1,
+            text2
+        )
+    )
