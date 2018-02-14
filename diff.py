@@ -1,10 +1,12 @@
 #!/usr/bin/python
 """HTML Diff: http://www.aaronsw.com/2002/diff
 Rough code, badly documented. Send me comments and patches."""
+from collections import deque
 from operator import itemgetter
 
 import difflib
 import string
+from pprint import pprint
 
 
 def get_equality(str1: str, str2: str)->float:
@@ -21,6 +23,8 @@ def get_equality(str1: str, str2: str)->float:
         try:
             if letter == big_str[number]:
                 equal_letters_count += 1
+            else:
+                break
         except IndexError:
             pass
 
@@ -28,10 +32,25 @@ def get_equality(str1: str, str2: str)->float:
     return equal_letters_count / letters_count
 
 
-def text_diff(text_from, text_to):
+def text_diff(text_from, text_to, config=None):
     """Takes in strings a and b and returns a human-readable HTML diff."""
 
-    text_to = similize(text_from, text_to)
+    config_default = {
+        "deleted_element": "del",
+        "inserted_element": "ins",
+        "modified_class": "diff modified",
+        "deleted_class": "diff deleted",
+        "inserted_class": "diff inserted",
+    }
+
+    if config is None:
+        config = {}
+
+    for key, default_value in config_default.items():
+        if key not in config:
+            config[key] = default_value
+
+    # text_to = similize2(text_from, text_to)
     out = []
     text_from, text_to = html2list(text_from), html2list(text_to)
     try:  # autojunk can cause malformed HTML, but also speeds up processing.
@@ -49,22 +68,29 @@ def text_diff(text_from, text_to):
             # call textDiff but not for html, but for some html... ugh
             # gonna cop-out for now
             out.append(
-                '<del class="diff modified">{del_}</del>'
-                '<ins class="diff modified">{ins}</ins>'.format(
-                    del_=''.join(text_from[from_1:to_1]),
-                    ins=''.join(text_to[from_2:to_2])
+                '<{del_el} class="{mod_class}">{del_str}</{del_el}>'
+                '<{ins_el} class="{mod_class}">{ins_str}</{ins_el}>'.format(
+                    del_el=config["deleted_element"],
+                    ins_el=config["inserted_element"],
+                    mod_class=config["modified_class"],
+                    del_str=''.join(text_from[from_1:to_1]),
+                    ins_str=''.join(text_to[from_2:to_2])
                 )
             )
         elif action == "delete":
             out.append(
-                '<del class="diff">{}</del>'.format(
-                    ''.join(text_from[from_1:to_1])
+                '<{del_el} class="{del_class}">{del_str}</{del_el}>'.format(
+                    del_str=''.join(text_from[from_1:to_1]),
+                    del_el=config["deleted_element"],
+                    del_class=config["deleted_class"]
                 )
             )
         elif action == "insert":
             out.append(
-                '<ins class="diff">{}</ins>'.format(
-                    ''.join(text_to[from_2:to_2])
+                '<{ins_el} class="{ins_class}">{ins_str}</{ins_el}>'.format(
+                    ins_str=''.join(text_to[from_2:to_2]),
+                    ins_el=config["inserted_element"],
+                    ins_class=config["inserted_class"]
                 )
             )
         elif action == "equal":
@@ -118,20 +144,69 @@ def similize(text1, text2):
     similized_text2 = ''
     text1_str_list = text1.split('\n')
     text2_str_list = text2.split('\n')
+
     for index1, string1 in enumerate(text1_str_list):
         equality_map = []
         for index2, string2 in enumerate(text2_str_list):
             equality_map.append(
                 (index1, index2, get_equality(string1, string2))
-            )
+            )  # строим карту с похожести строк
+        print("str1:\n", string1)
+        pprint(equality_map)
         result_string_tuple = max(equality_map, key=itemgetter(2))
-        # print(result_string_tuple)
+        # смотрим на какую строку больше всего похож код
+        print(result_string_tuple)
         moove_map.append(result_string_tuple)
     for index_tuple in moove_map:
         similized_text2 += text2_str_list[index_tuple[1]]
         if index_tuple[0] + 1 < len(moove_map):
             similized_text2 += '\n'
+
+    print(similized_text2)
+
     return similized_text2
+
+
+def get_text_from_strings_sequense(string_list, strings_sequense):
+    result_text = ""
+    for list_number, string_number in enumerate(strings_sequense):
+        result_text += string_list[string_number]
+        if list_number + 1 < len(strings_sequense):
+            result_text += "\n"
+    return result_text
+
+
+def similize2(text1, text2):
+    moove_map = []
+    similized_text2 = ''
+    text1_str_list = text1.split('\n')
+    text2_str_list = text2.split('\n')
+    strings_sequense = []
+    buffer = deque()
+    for index2, string2 in enumerate(text2_str_list):
+        equality_map = []
+        for index1, string1 in enumerate(text1_str_list):
+            equality_map.append(
+                (index2, index1, get_equality(string1, string2))
+            )
+        result_string_tuple = max(equality_map, key=itemgetter(2))
+        if result_string_tuple[0] == result_string_tuple[1]:
+            strings_sequense.append(index2)
+        else:
+            buffer.appendleft(index2)
+            if len(buffer) == 2:
+                strings_sequense.extend(buffer)
+                buffer.clear()
+    if len(buffer) == 1:
+        strings_sequense.append(buffer[0])
+
+    result_text2 = get_text_from_strings_sequense(
+        text2_str_list,
+        strings_sequense
+    )
+    print(strings_sequense)
+    print("промежуточный:")
+    print(result_text2)
 
 
 if __name__ == '__main__':
