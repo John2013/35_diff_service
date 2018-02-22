@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>HTML diff</title>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"
+	      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	{#	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/file-uploader/5.15.5/fine-uploader.min.css"#}
+	{#	      integrity="sha256-2aDgpDIY4gqG5ohxnxvwpzIBWdeOoHPhg1nVfu5XqoM=" crossorigin="anonymous"/>#}
+	<style>
+		.diff_form__field {
+			display: inline-block;
+		}
+
+		textarea {
+			width: 100%;
+		}
+	</style>
+</head>
+<body>
+<div class="container">
+	<h1>Get difference of 2 html documents</h1>
+	<form id="diff_form" class="row">
+		<div class="diff_form__field col">
+			<label for="doc1_text">Document1:</label><br>
+			<textarea name="doc1_text" id="doc1_text" cols="30" rows="10"></textarea>
+			<input type="file" id="doc1">
+		</div>
+
+		<div class="diff_form__field col">
+			<label for="doc2_text">Document2:</label><br>
+			<textarea name="doc2_text" id="doc2_text" cols="30" rows="10"></textarea>
+			<input type="file" id="doc2">
+		</div>
+	</form>
+	<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample"
+	        aria-expanded="false" aria-controls="collapseExample">
+		Settings
+	</button>
+	<div class="collapse" id="collapseExample">
+		<div class="card card-body">
+			<form>
+				<div class="form-group">
+					<label for="deleted_element">Html element of deleted text</label>
+					<input class="form-control" id="deleted_element" value="del">
+				</div>
+				<div class="form-group">
+					<label for="inserted_element">Html element of inserted text</label>
+					<input class="form-control" id="inserted_element" value="ins">
+				</div>
+				<div class="form-group">
+					<label for="modified_class">Color of modified text</label>
+					<select class="form-control" id="modified_class">
+						<option class="bg-primary text-white" value="bg-primary text-white">blue</option>
+						<option class="bg-secondary text-white" value="bg-secondary text-white">grey</option>
+						<option class="bg-success text-white" value="bg-success text-white">green</option>
+						<option class="bg-danger text-white" value="bg-danger text-white">red</option>
+						<option class="bg-warning text-dark" value="bg-warning text-dark" selected>yellow</option>
+						<option class="bg-info text-white" value="bg-info text-white">light-blue</option>
+						<option class="bg-light text-dark" value="bg-light text-dark">light</option>
+						<option class="bg-dark text-white" value="bg-dark text-white">dark</option>
+						<option class="bg-white text-dark" value="bg-white text-dark">white</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="deleted_class">Color of deleted text</label>
+					<select class="form-control" id="deleted_class">
+						<option class="bg-primary text-white" value="bg-primary text-white">blue</option>
+						<option class="bg-secondary text-white" value="bg-secondary text-white">grey</option>
+						<option class="bg-success text-white" value="bg-success text-white">green</option>
+						<option class="bg-danger text-white" value="bg-danger text-white" selected>red</option>
+						<option class="bg-warning text-dark" value="bg-warning text-dark">yellow</option>
+						<option class="bg-info text-white" value="bg-info text-white">light-blue</option>
+						<option class="bg-light text-dark" value="bg-light text-dark">light</option>
+						<option class="bg-dark text-white" value="bg-dark text-white">dark</option>
+						<option class="bg-white text-dark" value="bg-white text-dark">white</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="inserted_class">Color of inserted text</label>
+					<select class="form-control" id="inserted_class">
+						<option class="bg-primary text-white" value="bg-primary text-white">blue</option>
+						<option class="bg-secondary text-white" value="bg-secondary text-white">grey</option>
+						<option class="bg-success text-white" value="bg-success text-white" selected>green</option>
+						<option class="bg-danger text-white" value="bg-danger text-white">red</option>
+						<option class="bg-warning text-dark" value="bg-warning text-dark">yellow</option>
+						<option class="bg-info text-white" value="bg-info text-white">light-blue</option>
+						<option class="bg-light text-dark" value="bg-light text-dark">light</option>
+						<option class="bg-dark text-white" value="bg-dark text-white">dark</option>
+						<option class="bg-white text-dark" value="bg-white text-dark">white</option>
+					</select>
+				</div>
+			</form>
+		</div>
+	</div>
+	<button id="compare-button">Compare</button>
+	<div id="compare-result"></div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js"
+        integrity="sha384-feJI7QwhOS+hwpX2zkaeJQjeiwlhOP+SdQDqhgvvo1DsjtiSQByFdThsxO669S2D"
+        crossorigin="anonymous"></script>
+<script src="/static/js/axios.min.js"></script>
+<script>
+	let compareButton = document.getElementById("compare-button");
+
+	function escapeHtml(text) {
+		let map = {
+			'&': '&amp;',
+			'<': '&lt;',
+			'>': '&gt;',
+			'"': '&quot;',
+			"'": '&#039;',
+			'\n': '<br>\n'
+		};
+
+		return text.replace(/[&<>"'\n]/g, function (m) {
+			return map[m];
+		});
+	}
+
+	compareButton.addEventListener("click", function () {
+		let text1 = escapeHtml(document.getElementById("doc1_text").value),
+			text2 = escapeHtml(document.getElementById("doc2_text").value),
+			config = {
+				deleted_element: document.getElementById("deleted_element").value,
+				inserted_element: document.getElementById("inserted_element").value,
+				modified_class: document.getElementById("modified_class").value,
+				deleted_class: document.getElementById("deleted_class").value,
+				inserted_class: document.getElementById("inserted_class").value,
+			},
+			resultField = document.getElementById("compare-result");
+
+		console.log(text1, text2);
+		axios.post('/api/v1.0/diff', {
+			doc1: text1,
+			doc2: text2,
+			config: config
+		})
+			.then(function (response) {
+				resultField.innerHTML = "<p><strong>Result:</strong></p>" + response.data.result
+			})
+			.catch(function (error) {
+				resultField.innerHTML = "<p><strong>Error:</strong></p>" + error;
+				console.log(error);
+			});
+	})
+</script>
+<script>
+	function readTextFile(file_input_id) {
+		// obtain input element through DOM
+
+		const file = document.getElementById(file_input_id).files[0];
+		if (file) {
+			getAsText(file, file_input_id);
+		}
+	}
+
+	function getAsText(readFile, file_input_id) {
+
+		let reader = new FileReader();
+
+		// Read file into memory as UTF-16
+		reader.readAsText(readFile, "UTF-8");
+
+		// Handle progress, success, and errors
+		reader.onload = function (evt) {
+			loaded(evt, file_input_id)
+		};
+		reader.onerror = errorHandler;
+	}
+
+	function loaded(evt, file_input_id, text_id_postfix = "_text") {
+		document.getElementById(file_input_id + text_id_postfix).value = evt.target.result
+	}
+
+	function errorHandler(evt) {
+		if (evt.target.error.name === "NotReadableError") {
+			console.error("The file could not be read")
+		}
+	}
+
+	function multipleReadTextFile(input_id_list) {
+		input_id_list.forEach(function (input_id) {
+			document.getElementById(input_id).addEventListener('change', function (e) {
+				readTextFile(input_id);
+			}, false);
+		});
+	}
+
+
+	$(document).ready(function () {
+		multipleReadTextFile(["doc1", "doc2"])
+	});
+</script>
+</body>
+</html>

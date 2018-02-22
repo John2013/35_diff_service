@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>API help</title>
+</head>
+<body>
+
+<h1>Get difference of 2 html documents</h1>
+<pre>POST http://127.0.0.1:5000/api/v1.0/diff
+Content-Type: application/json
+
+Params:
+{
+    "doc1": "text1",
+    "doc2": "text2",
+    "config": {//any config param are not required
+       "deleted_element": "del",
+        "inserted_element": "ins",
+        "modified_class": "diff modified",
+        "deleted_class": "diff deleted",
+        "inserted_class": "diff inserted",
+    }
+}</pre>
+<h2>Example</h2>
+<h3>Request</h3>
+<pre>POST http://127.0.0.1:5000/api/v1.0/diff
+Content-Type: application/json
+
+{
+    "doc1": "&lt;ul&gt;
+	&lt;li&gt;Автор: Григорьев П.А.&lt;/li&gt;
+	&lt;li&gt;Сумма: 126000 руб.&lt;/li&gt;
+	&lt;li&gt;Дата: 26.12.14&lt;/li&gt;
+&lt;/ul&gt;",
+    "doc2": "&lt;ul&gt;
+	&lt;li&gt;Сумма: 126000 руб.&lt;/li&gt;
+	&lt;li&gt;Автор: Петров Г.Е.&lt;/li&gt;
+	&lt;li&gt;Дата: 26.12.14&lt;/li&gt;
+	484
+&lt;/ul&gt;",
+    "config": {
+        "modified_class": "diff modifieddd",
+        "deleted_class": "diff deleteddd",
+        "inserted_class": "diff inserteddd"
+    }
+}</pre>
+<h3>Response</h3>
+<pre>{
+  "result": "&lt;ul&gt;&lt;del class=\&quot;diff deleteddd\&quot;&gt;
+	&lt;li&gt;Автор: Григорьев П.А.&lt;/li&gt;&lt;/del&gt;
+	&lt;li&gt;Сумма: 126000 руб.&lt;/li&gt;
+	&lt;li&gt;&lt;ins class=\&quot;diff inserteddd\&quot;&gt;Автор: Петров Г.Е.&lt;/li&gt;
+	&lt;li&gt;&lt;/ins&gt;Дата: 26.12.14&lt;/li&gt;
+&lt;ins class=\&quot;diff inserteddd\&quot;&gt;	484
+&lt;/ins&gt;&lt;/ul&gt;"
+}</pre>
+</body>
+</html>
