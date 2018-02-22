@@ -46,15 +46,17 @@ class TextDiffTestCase(unittest.TestCase):
         )
 
     def test_config(self):
+        config = {
+            "deleted_element": "span", "inserted_element": "span",
+            "modified_class": "test", "deleted_class": "test",
+            "inserted_class": "test"
+        }
         self.assertEqual(
+
             text_diff(
                 "111\n222\n333\n444\n555",
                 "000\n111\n223\n333\n444\n",
-                {
-                    "deleted_element": "span", "inserted_element": "span",
-                    "modified_class": "test", "deleted_class": "test",
-                    "inserted_class": "test"
-                }
+                config
             ),
             "<span class=\"test\">000\n</span>111\n<span class=\"test\">222\n<"
             "/span><span class=\"test\">223\n</span>333\n444\n<span class=\"te"
