@@ -44,4 +44,4 @@ def api_diff():
 if __name__ == '__main__':
     handler = RotatingFileHandler('log.txt', maxBytes=10000, backupCount=1)
     app.logger.addHandler(handler)
-    app.run(debug=True)
+    app.run()
