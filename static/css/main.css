@@ -1,0 +1,9 @@
+.diff_form__field {
+	display: inline-block;
+}
+textarea {
+	width: 100%;
+}
+button {
+	margin-top: 20px;
+}
