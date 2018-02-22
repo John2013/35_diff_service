@@ -4,7 +4,6 @@ from logging.handlers import RotatingFileHandler
 from diff import text_diff
 
 app = Flask(__name__)
-# app.config.from_object('config')
 
 
 @app.route('/')
