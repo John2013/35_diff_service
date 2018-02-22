@@ -24,7 +24,17 @@ def get_config(config):
     return config
 
 
-def update_opcodes(out, text1, text2, action, from_1, to_1, from_2, to_2, config):
+def update_opcodes(
+    out,
+    text1,
+    text2,
+    action,
+    from_1,
+    to_1,
+    from_2,
+    to_2,
+    config
+):
     if action == "replace":
         out.append(
             "<{del_el} class=\"{mod_class}\">{del_str}</{del_el}>"
@@ -89,35 +99,46 @@ def text_diff(text1, text2, config=None):
     return "".join(out)
 
 
+def html2list_tag(char, cur, out, mode, b):
+    if char == ">":
+        if b:
+            cur += "]"
+        else:
+            cur += char
+        out.append(cur)
+        cur = ""
+        mode = "char"
+    else:
+        cur += char
+    return char, cur, out, mode
+
+
+def html2list_char(char, cur, out, mode, b):
+    if char == "<":
+        out.append(cur)
+        if b:
+            cur = "["
+        else:
+            cur = char
+        mode = "tag"
+    elif char in string.whitespace:
+        out.append(cur + char)
+        cur = ""
+    else:
+        cur += char
+    return char, cur, out, mode
+
+
 def html2list(text, b=0):
     mode = "char"
     cur = ""
     out = []
     for char in text:
         if mode == "tag":
-            if char == ">":
-                if b:
-                    cur += "]"
-                else:
-                    cur += char
-                out.append(cur)
-                cur = ""
-                mode = "char"
-            else:
-                cur += char
+            char, cur, out, mode = html2list_tag(char, cur, out, mode, b)
+
         elif mode == "char":
-            if char == "<":
-                out.append(cur)
-                if b:
-                    cur = "["
-                else:
-                    cur = char
-                mode = "tag"
-            elif char in string.whitespace:
-                out.append(cur + char)
-                cur = ""
-            else:
-                cur += char
+            char, cur, out, mode = html2list_char(char, cur, out, mode, b)
     out.append(cur)
     return list(filter(lambda x: x is not "", out))
 

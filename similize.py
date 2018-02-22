@@ -38,25 +38,23 @@ def get_equalitiest_str_number(string1, text2_str_list):
 
 
 def similize(text1, text2):
-    text1_list = text1.split("\n")
-    text2_list = text2.split("\n")
+    list1 = text1.split("\n")
+    list2 = text2.split("\n")
     index1_shift = 0
-    for index in range(max(len(text1_list), len(text2_list))):
+    for index in range(max(len(list1), len(list2))):
         index1 = index + index1_shift
         try:
-            str1 = text1_list[index1]
-            str2 = text2_list[index]
+            str1 = list1[index1]
+            str2 = list2[index]
         except IndexError:
             continue
         if str1 == str2:
             continue
         else:
-            similiest_index = get_equalitiest_str_number(str1, text2_list)
-            if similiest_index is None:
+            index2 = get_equalitiest_str_number(str1, list2)
+            if index2 is None:
                 index1_shift += 1
                 continue
-            elif index > similiest_index:
-                text2_list[index1], text2_list[
-                    similiest_index
-                ] = text2_list[similiest_index], text2_list[index1]
-    return "\n".join(text2_list)
+            elif index > index2:
+                list2[index1], list2[index2] = list2[index2], list2[index1]
+    return "\n".join(list2)
