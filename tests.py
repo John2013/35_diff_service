@@ -2,7 +2,7 @@ import unittest
 from diff import text_diff
 
 
-class PriceFormatTestCase(unittest.TestCase):
+class TextDiffTestCase(unittest.TestCase):
     def test_change_string(self):
         self.assertEqual(
             text_diff("111\n222\n333\n444\n555", "111\n2222\n333\n444\n555"),

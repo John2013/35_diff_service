@@ -46,11 +46,11 @@ Content-Type: application/json
 ```
 
 Params:
-```json
+```
 {
     "doc1": "text1",
     "doc2": "text2",
-    "config": {//any config param are not required
+    "config": {#any config param are not required
        "deleted_element": "del",
         "inserted_element": "ins",
         "modified_class": "diff modified",
