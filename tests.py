@@ -69,6 +69,28 @@ class PriceFormatTestCase(unittest.TestCase):
             '555'
         )
 
+    def test_del_string2(self):
+        self.assertEqual(
+            text_diff(
+                '111\n'
+                '222\n'
+                '333\n'
+                '444\n'
+                '555',
+
+                '222\n'
+                '112\n'
+                '333\n'
+                '444'
+            ),
+            '<del class="diff modified">111\n'
+            '</del><ins class="diff modified">112\n'
+            '</ins>222\n'
+            '333\n'
+            '<del class="diff modified">444\n'
+            '555</del><ins class="diff modified">444</ins>'
+        )
+
     def test_add_string(self):
         self.assertEqual(
             text_diff(

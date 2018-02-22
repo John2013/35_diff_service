@@ -49,9 +49,10 @@ def similize(text1, text2):
     for index in range(max(len(text1_str_list), len(text2_str_list))):
         try:
             str1 = text1_str_list[index + index1_shift]
+            str2 = text2_str_list[index]
         except IndexError:
             continue
-        if str1 == text2_str_list[index]:
+        if str1 == str2:
             continue
         else:
             most_similar_string_index = get_max_equality_string_number(
