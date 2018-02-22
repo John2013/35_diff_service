@@ -6,8 +6,6 @@
 	<title>HTML diff</title>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"
 	      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-	{#	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/file-uploader/5.15.5/fine-uploader.min.css"#}
-	{#	      integrity="sha256-2aDgpDIY4gqG5ohxnxvwpzIBWdeOoHPhg1nVfu5XqoM=" crossorigin="anonymous"/>#}
 	<style>
 		.diff_form__field {
 			display: inline-block;
@@ -15,6 +13,10 @@
 
 		textarea {
 			width: 100%;
+		}
+
+		button {
+			margin-top: 20px;
 		}
 	</style>
 </head>
@@ -34,7 +36,7 @@
 			<input type="file" id="doc2">
 		</div>
 	</form>
-	<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample"
+	<button class="btn btn-default" type="button" data-toggle="collapse" data-target="#collapseExample"
 	        aria-expanded="false" aria-controls="collapseExample">
 		Settings
 	</button>
@@ -94,7 +96,9 @@
 			</form>
 		</div>
 	</div>
-	<button id="compare-button">Compare</button>
+	<br>
+	<button id="compare-button" class="btn btn-primary">Compare</button>
+	<hr>
 	<div id="compare-result"></div>
 </div>
 
@@ -146,11 +150,10 @@
 			})
 			.catch(function (error) {
 				resultField.innerHTML = "<p><strong>Error:</strong></p>" + error;
-				console.log(error);
+				console.error(error);
 			});
-	})
-</script>
-<script>
+	});
+
 	function readTextFile(file_input_id) {
 		// obtain input element through DOM
 
@@ -164,10 +167,8 @@
 
 		let reader = new FileReader();
 
-		// Read file into memory as UTF-16
 		reader.readAsText(readFile, "UTF-8");
 
-		// Handle progress, success, and errors
 		reader.onload = function (evt) {
 			loaded(evt, file_input_id)
 		};
