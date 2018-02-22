@@ -20,8 +20,9 @@ def api_help():
 
 @app.route("/api/v1.0/diff", methods=["POST"])
 def api_diff():
+    status_ok, status_bad_request = 200, 400
     if not request.json:
-        abort(400)
+        abort(status_bad_request)
 
     try:
         return jsonify({
@@ -30,17 +31,18 @@ def api_diff():
                 request.json["doc2"],
                 request.json["config"]
             )
-        }), 200
+        }), status_ok
     except KeyError:
         return jsonify({
             "result": text_diff(
                 request.json["doc1"],
                 request.json["doc2"]
             )
-        }), 200
+        }), status_ok
 
 
 if __name__ == "__main__":
-    handler = RotatingFileHandler("log.txt", maxBytes=10000, backupCount=1)
+    log_size = 10000
+    handler = RotatingFileHandler("log.txt", maxBytes=log_size, backupCount=1)
     app.logger.addHandler(handler)
     app.run()

@@ -1,93 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<title>HTML diff</title>
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"
-	      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-	<link rel="stylesheet" href="/static/css/main.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>HTML diff</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/css/main.css">
 </head>
 <body>
 <div class="container">
-	<h1>Get difference of 2 html documents</h1>
-	<form id="diff_form" class="row">
-		<div class="diff_form__field col">
-			<label for="doc1_text">Document1:</label><br>
-			<textarea name="doc1_text" id="doc1_text" cols="30" rows="10"></textarea>
-			<input type="file" id="doc1">
-		</div>
+    <h1>Get difference of 2 html documents</h1>
+    <form id="diff_form" class="row">
+        <div class="diff_form__field col">
+            <label for="doc1_text">Document1:</label><br>
+            <textarea name="doc1_text" id="doc1_text" cols="30" rows="10"></textarea>
+            <input type="file" id="doc1">
+        </div>
 
-		<div class="diff_form__field col">
-			<label for="doc2_text">Document2:</label><br>
-			<textarea name="doc2_text" id="doc2_text" cols="30" rows="10"></textarea>
-			<input type="file" id="doc2">
-		</div>
-	</form>
-	<button class="btn btn-default" type="button" data-toggle="collapse" data-target="#collapseExample"
-	        aria-expanded="false" aria-controls="collapseExample">
-		Settings
-	</button>
-	<div class="collapse" id="collapseExample">
-		<div class="card card-body">
-			<form>
-				<div class="form-group">
-					<label for="deleted_element">Html element of deleted text</label>
-					<input class="form-control" id="deleted_element" value="del">
-				</div>
-				<div class="form-group">
-					<label for="inserted_element">Html element of inserted text</label>
-					<input class="form-control" id="inserted_element" value="ins">
-				</div>
-				<div class="form-group">
-					<label for="modified_class">Color of modified text</label>
-					<select class="form-control" id="modified_class">
-						<option class="bg-primary text-white" value="bg-primary text-white">blue</option>
-						<option class="bg-secondary text-white" value="bg-secondary text-white">grey</option>
-						<option class="bg-success text-white" value="bg-success text-white">green</option>
-						<option class="bg-danger text-white" value="bg-danger text-white">red</option>
-						<option class="bg-warning text-dark" value="bg-warning text-dark" selected>yellow</option>
-						<option class="bg-info text-white" value="bg-info text-white">light-blue</option>
-						<option class="bg-light text-dark" value="bg-light text-dark">light</option>
-						<option class="bg-dark text-white" value="bg-dark text-white">dark</option>
-						<option class="bg-white text-dark" value="bg-white text-dark">white</option>
-					</select>
-				</div>
-				<div class="form-group">
-					<label for="deleted_class">Color of deleted text</label>
-					<select class="form-control" id="deleted_class">
-						<option class="bg-primary text-white" value="bg-primary text-white">blue</option>
-						<option class="bg-secondary text-white" value="bg-secondary text-white">grey</option>
-						<option class="bg-success text-white" value="bg-success text-white">green</option>
-						<option class="bg-danger text-white" value="bg-danger text-white" selected>red</option>
-						<option class="bg-warning text-dark" value="bg-warning text-dark">yellow</option>
-						<option class="bg-info text-white" value="bg-info text-white">light-blue</option>
-						<option class="bg-light text-dark" value="bg-light text-dark">light</option>
-						<option class="bg-dark text-white" value="bg-dark text-white">dark</option>
-						<option class="bg-white text-dark" value="bg-white text-dark">white</option>
-					</select>
-				</div>
-				<div class="form-group">
-					<label for="inserted_class">Color of inserted text</label>
-					<select class="form-control" id="inserted_class">
-						<option class="bg-primary text-white" value="bg-primary text-white">blue</option>
-						<option class="bg-secondary text-white" value="bg-secondary text-white">grey</option>
-						<option class="bg-success text-white" value="bg-success text-white" selected>green</option>
-						<option class="bg-danger text-white" value="bg-danger text-white">red</option>
-						<option class="bg-warning text-dark" value="bg-warning text-dark">yellow</option>
-						<option class="bg-info text-white" value="bg-info text-white">light-blue</option>
-						<option class="bg-light text-dark" value="bg-light text-dark">light</option>
-						<option class="bg-dark text-white" value="bg-dark text-white">dark</option>
-						<option class="bg-white text-dark" value="bg-white text-dark">white</option>
-					</select>
-				</div>
-			</form>
-		</div>
-	</div>
-	<br>
-	<button id="compare-button" class="btn btn-primary">Compare</button>
-	<hr>
-	<div id="compare-result"></div>
+        <div class="diff_form__field col">
+            <label for="doc2_text">Document2:</label><br>
+            <textarea name="doc2_text" id="doc2_text" cols="30" rows="10"></textarea>
+            <input type="file" id="doc2">
+        </div>
+    </form>
+    <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#collapseExample"
+            aria-expanded="false" aria-controls="collapseExample">
+        Settings
+    </button>
+    <div class="collapse" id="collapseExample">
+        <div class="card card-body">
+            <form>
+                <div class="form-group">
+                    <label for="deleted_element">Html element of deleted text</label>
+                    <input class="form-control" id="deleted_element" value="del">
+                </div>
+                <div class="form-group">
+                    <label for="inserted_element">Html element of inserted text</label>
+                    <input class="form-control" id="inserted_element" value="ins">
+                </div>
+                <div class="form-group">
+                    <label for="modified_class">Color of modified text</label>
+                    <select class="form-control" id="modified_class">
+                        <option class="bg-primary text-white" value="bg-primary text-white">blue</option>
+                        <option class="bg-secondary text-white" value="bg-secondary text-white">grey</option>
+                        <option class="bg-success text-white" value="bg-success text-white">green</option>
+                        <option class="bg-danger text-white" value="bg-danger text-white">red</option>
+                        <option class="bg-warning text-dark" value="bg-warning text-dark" selected>yellow</option>
+                        <option class="bg-info text-white" value="bg-info text-white">light-blue</option>
+                        <option class="bg-light text-dark" value="bg-light text-dark">light</option>
+                        <option class="bg-dark text-white" value="bg-dark text-white">dark</option>
+                        <option class="bg-white text-dark" value="bg-white text-dark">white</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="deleted_class">Color of deleted text</label>
+                    <select class="form-control" id="deleted_class">
+                        <option class="bg-primary text-white" value="bg-primary text-white">blue</option>
+                        <option class="bg-secondary text-white" value="bg-secondary text-white">grey</option>
+                        <option class="bg-success text-white" value="bg-success text-white">green</option>
+                        <option class="bg-danger text-white" value="bg-danger text-white" selected>red</option>
+                        <option class="bg-warning text-dark" value="bg-warning text-dark">yellow</option>
+                        <option class="bg-info text-white" value="bg-info text-white">light-blue</option>
+                        <option class="bg-light text-dark" value="bg-light text-dark">light</option>
+                        <option class="bg-dark text-white" value="bg-dark text-white">dark</option>
+                        <option class="bg-white text-dark" value="bg-white text-dark">white</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="inserted_class">Color of inserted text</label>
+                    <select class="form-control" id="inserted_class">
+                        <option class="bg-primary text-white" value="bg-primary text-white">blue</option>
+                        <option class="bg-secondary text-white" value="bg-secondary text-white">grey</option>
+                        <option class="bg-success text-white" value="bg-success text-white" selected>green</option>
+                        <option class="bg-danger text-white" value="bg-danger text-white">red</option>
+                        <option class="bg-warning text-dark" value="bg-warning text-dark">yellow</option>
+                        <option class="bg-info text-white" value="bg-info text-white">light-blue</option>
+                        <option class="bg-light text-dark" value="bg-light text-dark">light</option>
+                        <option class="bg-dark text-white" value="bg-dark text-white">dark</option>
+                        <option class="bg-white text-dark" value="bg-white text-dark">white</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+    <br>
+    <button id="compare-button" class="btn btn-primary">Compare</button>
+    <hr>
+    <div id="compare-result"></div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
