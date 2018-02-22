@@ -37,24 +37,38 @@ def get_equalitiest_str_number(string1, text2_str_list):
         return most_similar_index
 
 
+def compare_strings(list1, list2, index, index1_shift):
+    continue_bool = False
+    index1 = index + index1_shift
+    try:
+        str1 = list1[index1]
+        str2 = list2[index]
+    except IndexError:
+        continue_bool = True
+        return list1, list2, index, index1_shift, continue_bool
+    if str1 == str2:
+        continue_bool = True
+        return list1, list2, index, index1_shift, continue_bool
+    else:
+        index2 = get_equalitiest_str_number(str1, list2)
+        if index2 is None:
+            index1_shift += 1
+            continue_bool = True
+            return list1, list2, index, index1_shift, continue_bool
+        elif index > index2:
+            list2[index1], list2[index2] = list2[index2], list2[index1]
+    return list1, list2, index, index1_shift, continue_bool
+
+
 def similize(text1, text2):
-    list1 = text1.split("\n")
-    list2 = text2.split("\n")
-    index1_shift = 0
+    list1, list2, index1_shift = text1.split("\n"), text2.split("\n"), 0
     for index in range(max(len(list1), len(list2))):
-        index1 = index + index1_shift
-        try:
-            str1 = list1[index1]
-            str2 = list2[index]
-        except IndexError:
+        list1, list2, index, index1_shift, continue_bool = compare_strings(
+            list1,
+            list2,
+            index,
+            index1_shift
+        )
+        if continue_bool:
             continue
-        if str1 == str2:
-            continue
-        else:
-            index2 = get_equalitiest_str_number(str1, list2)
-            if index2 is None:
-                index1_shift += 1
-                continue
-            elif index > index2:
-                list2[index1], list2[index2] = list2[index2], list2[index1]
     return "\n".join(list2)
