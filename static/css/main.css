@@ -1,11 +1,11 @@
 .diff_form__field {
-	display: inline-block;
+    display: inline-block;
 }
 
 textarea {
-	width: 100%;
+    width: 100%;
 }
 
 button {
-	margin-top: 20px;
+    margin-top: 20px;
 }
