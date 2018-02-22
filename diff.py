@@ -43,8 +43,8 @@ def get_max_equality_string_number(string1, text2_str_list, min_index=0):
 
 
 def similize(text1, text2):
-    text1_str_list = text1.split('\n')
-    text2_str_list = text2.split('\n')
+    text1_str_list = text1.split("\n")
+    text2_str_list = text2.split("\n")
     index1_shift = 0
     for index in range(max(len(text1_str_list), len(text2_str_list))):
         try:
@@ -109,75 +109,75 @@ def text_diff(text1, text2, config=None):
             # call textDiff but not for html, but for some html... ugh
             # gonna cop-out for now
             out.append(
-                '<{del_el} class="{mod_class}">{del_str}</{del_el}>'
-                '<{ins_el} class="{mod_class}">{ins_str}</{ins_el}>'.format(
+                "<{del_el} class=\"{mod_class}\">{del_str}</{del_el}>"
+                "<{ins_el} class=\"{mod_class}\">{ins_str}</{ins_el}>".format(
                     del_el=config["deleted_element"],
                     ins_el=config["inserted_element"],
                     mod_class=config["modified_class"],
-                    del_str=''.join(text1[from_1:to_1]),
-                    ins_str=''.join(text2[from_2:to_2])
+                    del_str="".join(text1[from_1:to_1]),
+                    ins_str="".join(text2[from_2:to_2])
                 )
             )
         elif action == "delete":
             out.append(
-                '<{del_el} class="{del_class}">{del_str}</{del_el}>'.format(
-                    del_str=''.join(text1[from_1:to_1]),
+                "<{del_el} class=\"{del_class}\">{del_str}</{del_el}>".format(
+                    del_str="".join(text1[from_1:to_1]),
                     del_el=config["deleted_element"],
                     del_class=config["deleted_class"]
                 )
             )
         elif action == "insert":
             out.append(
-                '<{ins_el} class="{ins_class}">{ins_str}</{ins_el}>'.format(
-                    ins_str=''.join(text2[from_2:to_2]),
+                "<{ins_el} class=\"{ins_class}\">{ins_str}</{ins_el}>".format(
+                    ins_str="".join(text2[from_2:to_2]),
                     ins_el=config["inserted_element"],
                     ins_class=config["inserted_class"]
                 )
             )
         elif action == "equal":
             out.append(
-                ''.join(
+                "".join(
                     text2[from_2:to_2]
                 )
             )
         else:
-            raise "Um, something's broken. I didn't expect a {}.'".format(
+            raise "Um, something's broken. I didn't expect a {}.".format(
                 action
             )
-    return ''.join(out)
+    return "".join(out)
 
 
 def html2list(text, b=0):
-    mode = 'char'
-    cur = ''
+    mode = "char"
+    cur = ""
     out = []
     for char in text:
-        if mode == 'tag':
-            if char == '>':
+        if mode == "tag":
+            if char == ">":
                 if b:
-                    cur += ']'
+                    cur += "]"
                 else:
                     cur += char
                 out.append(cur)
-                cur = ''
-                mode = 'char'
+                cur = ""
+                mode = "char"
             else:
                 cur += char
-        elif mode == 'char':
-            if char == '<':
+        elif mode == "char":
+            if char == "<":
                 out.append(cur)
                 if b:
-                    cur = '['
+                    cur = "["
                 else:
                     cur = char
-                mode = 'tag'
+                mode = "tag"
             elif char in string.whitespace:
                 out.append(cur + char)
-                cur = ''
+                cur = ""
             else:
                 cur += char
     out.append(cur)
-    return list(filter(lambda x: x is not '', out))
+    return list(filter(lambda x: x is not "", out))
 
 
 def get_text_from_strings_sequense(string_list, strings_sequense):
@@ -189,7 +189,7 @@ def get_text_from_strings_sequense(string_list, strings_sequense):
     return result_text
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import sys
 
     first_arg, last_arg = 1, 2
@@ -199,9 +199,9 @@ if __name__ == '__main__':
         print("htmldiff: highlight the differences between two html files")
         print("usage: {} a b".format(sys.argv[0]))
         sys.exit(1)
-    text1 = open(a, encoding='utf-8').read()
-    text2 = open(b, encoding='utf-8').read()
-    print(text1, text2, sep='\n')
+    text1 = open(a, encoding="utf-8").read()
+    text2 = open(b, encoding="utf-8").read()
+    print(text1, text2, sep="\n")
     print("new text 2:")
     print(text2)
     print(

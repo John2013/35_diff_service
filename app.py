@@ -6,8 +6,8 @@ from diff import text_diff
 app = Flask(__name__)
 
 
-@app.route('/')
-@app.route('/index')
+@app.route("/")
+@app.route("/index")
 def index():
     return render_template("index.html")
 
@@ -40,7 +40,7 @@ def api_diff():
         }), 200
 
 
-if __name__ == '__main__':
-    handler = RotatingFileHandler('log.txt', maxBytes=10000, backupCount=1)
+if __name__ == "__main__":
+    handler = RotatingFileHandler("log.txt", maxBytes=10000, backupCount=1)
     app.logger.addHandler(handler)
     app.run()
