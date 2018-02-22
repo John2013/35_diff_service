@@ -47,12 +47,11 @@ Content-Type: application/json
 }</pre>
 <h3>Response</h3>
 <pre>{
-  "result": "&lt;ul&gt;&lt;del class=\&quot;diff deleteddd\&quot;&gt;
-	&lt;li&gt;Автор: Григорьев П.А.&lt;/li&gt;&lt;/del&gt;
-	&lt;li&gt;Сумма: 126000 руб.&lt;/li&gt;
-	&lt;li&gt;&lt;ins class=\&quot;diff inserteddd\&quot;&gt;Автор: Петров Г.Е.&lt;/li&gt;
-	&lt;li&gt;&lt;/ins&gt;Дата: 26.12.14&lt;/li&gt;
-&lt;ins class=\&quot;diff inserteddd\&quot;&gt;	484
+  "result": "&lt;ul&gt;
+    &lt;li&gt;Автор: &lt;del class=&quot;diff modified&quot;&gt;Григорьев П.А.&lt;/del&gt;&lt;ins class=&quot;diff modified&quot;&gt;Петров Г.Е.&lt;/ins&gt;&lt;/li&gt;
+    &lt;li&gt;Сумма: 126000 руб.&lt;/li&gt;
+    &lt;li&gt;Дата: 26.12.14&lt;/li&gt;
+&lt;ins class=&quot;diff inserted&quot;&gt;    &lt;li&gt;ещё строка&lt;/li&gt;
 &lt;/ins&gt;&lt;/ul&gt;"
 }</pre>
 </body>
