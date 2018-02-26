@@ -1,1 +1,1 @@
-web: gunicorn diffservice.wsgi
+web: python app.py
