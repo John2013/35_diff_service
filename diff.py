@@ -74,7 +74,7 @@ def update_opcodes(
 def text_diff(text1, text2, config=None):
     """Takes in strings a and b and returns a human-readable HTML diff."""
 
-    # text2 = similize(text1, text2)
+    text2 = similize(text1, text2)
 
     config = get_config(config)
 
