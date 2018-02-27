@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, abort, jsonify
 from logging.handlers import RotatingFileHandler
 
+from werkzeug.contrib.fixers import ProxyFix
+
 from diff import text_diff
 
 app = Flask(__name__)
@@ -41,6 +43,7 @@ def api_diff():
         }), status_ok
 
 
+app.wsgi_app = ProxyFix(app.wsgi_app)
 if __name__ == "__main__":
     log_size = 10000
     handler = RotatingFileHandler("log.txt", maxBytes=log_size, backupCount=1)
