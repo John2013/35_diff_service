@@ -2,6 +2,10 @@
 
 Shows a difference betwen 2 text files
 
+# How to open
+
+https://diff-service.herokuapp.com/
+
 # How to install
 
 Python 3 should be already installed. Then use pip (or pip3 if there is
@@ -12,6 +16,7 @@ pip install -r requirements.txt # alternatively try pip3
 ```
 
 Remember, it is recommended to use [virtualenv/venv](https://devman.org/encyclopedia/pip/pip_virtualenv/) for better isolation.
+
 
 
 # How to use
